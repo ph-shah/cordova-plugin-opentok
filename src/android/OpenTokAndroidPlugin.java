@@ -180,8 +180,10 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
         public void destroyPublisher() {
             ViewGroup parent = (ViewGroup) cordova.getActivity().findViewById(android.R.id.content);
             parent.removeView(this.mView);
-            this.mPublisher.destroy();
-            this.mPublisher = null;
+            if(this.mPublisher != null){
+                this.mPublisher.destroy();
+                this.mPublisher = null;
+            }
         }
 
         public void run() {
@@ -196,7 +198,7 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
                 int audioBitrate = 40000;
                 String publisherName = "Android-Cordova-Publisher";
                 String frameRate = "FPS_30";
-                String resolution = "MEDIUM";
+                String resolution = "HIGH";
                 String cameraName = "front";
                 try {
                     publisherName = this.mProperty.getString(0);
@@ -232,6 +234,7 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
                 mPublisher.setAudioFallbackEnabled(audioFallbackEnabled);
                 mPublisher.setPublishAudio(publishVideo);
                 mPublisher.setPublishAudio(publishAudio);
+                Log.i(TAG, "publisher properties videoTrack : " + videoTrack);
                 if (cameraName.equals("back")) {
                     mPublisher.cycleCamera();
                 }
@@ -421,8 +424,10 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
                 cordova.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if(myPublisher != null){
                         myPublisher.destroyPublisher();
                         myPublisher = null;
+                        }
                     }
                 });
 
@@ -480,8 +485,10 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
                     cordova.requestPermissions(this, 0, perms);
                     permissionsCallback = callbackContext;
                 } else {
-                    myPublisher.startPublishing();
-                    Log.i(TAG, "publisher is publishing");
+                    if(myPublisher != null){
+                        myPublisher.startPublishing();
+                        Log.i(TAG, "publisher is publishing");
+                    }
                 }
             }
         } else if (action.equals("signal")) {
@@ -531,8 +538,10 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
             callback.setKeepCallback(false);
             permissionsCallback.sendPluginResult(callback);
         } else {
-            myPublisher.startPublishing();
-            Log.i(TAG, "permission granted-publisher is publishing");
+            if(myPublisher != null){
+                myPublisher.startPublishing();
+                Log.i(TAG, "permission granted-publisher is publishing");
+            }
         }
     }
 
