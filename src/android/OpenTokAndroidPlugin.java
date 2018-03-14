@@ -198,7 +198,7 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
                 int audioBitrate = 40000;
                 String publisherName = "Android-Cordova-Publisher";
                 String frameRate = "FPS_30";
-                String resolution = "HIGH";
+                String resolution = "MEDIUM";
                 String cameraName = "front";
                 try {
                     publisherName = this.mProperty.getString(0);
@@ -215,6 +215,9 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
                     }
                     if (compareStrings(this.mProperty.getString(16), "352x288")) {
                         resolution = "LOW";
+                    }
+                    if (compareStrings(this.mProperty.getString(16), "640x480")) {
+                        resolution = "MEDIUM";
                     }
                     Log.i(TAG, "publisher properties sanitized");
                 } catch (Exception e) {
