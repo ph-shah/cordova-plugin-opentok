@@ -415,8 +415,12 @@ TBPublisher = (function() {
   };
 
   TBPublisher.prototype.removePublisherElement = function() {
+    
+    if(this.pubElement && this.pubElement.parentNode){
+      alert(this.pubElement.parentNode)
     this.pubElement.parentNode.removeChild(this.pubElement);
     return this.pubElement = false;
+    }
   };
 
   TBPublisher.prototype.destroy = function() {
@@ -858,6 +862,7 @@ TBSession = (function() {
   TBSession.prototype.signalReceived = function(event) {
     var streamEvent;
     streamEvent = new TBEvent("signal");
+    streamEvent.type = event.type;
     streamEvent.data = event.data;
     streamEvent.from = this.connections[event.connectionId];
     this.dispatchEvent(streamEvent);

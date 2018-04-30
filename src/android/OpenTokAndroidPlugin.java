@@ -1,5 +1,7 @@
 package com.tokbox.cordova;
 
+import android.opengl.GLSurfaceView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -208,6 +210,11 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
                 if (compareStrings(this.mProperty.getString(16), "352x288")) {
                     resolution = "LOW";
                 }
+                if (compareStrings(this.mProperty.getString(16), "640x480")) {
+                    Log.i(TAG, "publisher properties sanitized MEDIUM");
+                    resolution = "MEDIUM";
+                }
+                //resolution = "LOW";
                 Log.i(TAG, "publisher properties sanitized");
             } catch (Exception e) {
                 Log.i(TAG, "Unable to set publisher properties");
@@ -271,6 +278,10 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
                 // Set depth location of camera view based on CSS z-index.
                 // See: https://developer.android.com/reference/android/view/View.html#setTranslationZ(float)
                 this.mView.setTranslationZ(this.getZIndex());
+
+                if (this.mView instanceof GLSurfaceView) {
+                     ((GLSurfaceView) this.mView).setZOrderOnTop(true);
+                }
             }
             super.run();
         }
@@ -588,8 +599,10 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
                     cordova.requestPermissions(this, 0, perms);
                     permissionsCallback = callbackContext;
                 } else {
+                    if(myPublisher != null){
                     myPublisher.startPublishing();
                     Log.i(TAG, "publisher is publishing");
+                    }
                 }
             }
         } else if (action.equals("signal")) {
@@ -673,8 +686,10 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
             callback.setKeepCallback(false);
             permissionsCallback.sendPluginResult(callback);
         } else {
+            if(myPublisher != null){
             myPublisher.startPublishing();
             Log.i(TAG, "permission granted-publisher is publishing");
+            }
         }
     }
 
