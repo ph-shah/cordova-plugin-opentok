@@ -417,7 +417,7 @@ TBPublisher = (function() {
   TBPublisher.prototype.removePublisherElement = function() {
     
     if(this.pubElement && this.pubElement.parentNode){
-      alert(this.pubElement.parentNode)
+      
     this.pubElement.parentNode.removeChild(this.pubElement);
     return this.pubElement = false;
     }
@@ -664,6 +664,28 @@ TBSession = (function() {
     }
     return Cordova.exec(TBSuccess, TBError, OTPlugin, "unpublish", []);
   };
+  TBSession.prototype.unpublishOnly = function() {
+    var element;
+    this.alreadyPublishing = false;
+    console.log("JS: unpublishOnly");
+    
+    return Cordova.exec(TBSuccess, TBError, OTPlugin, "unpublishOnly", []);
+  };
+  TBSession.prototype.publishOnly = function() {
+    if (this.alreadyPublishing) {
+      pdebug("Session is already publishing", {});
+      return;
+    }
+    this.alreadyPublishing = true;
+    if (typeof arguments[0] === "object") {
+      this.publisher = arguments[0];
+    } else {
+      this.publisher = OT.initPublisher(arguments);
+    }
+    this.publisher.setSession(this);
+    Cordova.exec(TBSuccess, OTPublisherError, OTPlugin, "publishOnly", []);
+    return this.publisher;
+  };
 
   TBSession.prototype.unsubscribe = function(subscriber) {
     var element, elementId;
@@ -679,6 +701,7 @@ TBSession = (function() {
     }
     return Cordova.exec(TBSuccess, TBError, OTPlugin, "unsubscribe", [subscriber.streamId]);
   };
+  
 
   function TBSession(apiKey, sessionId) {
     this.apiKey = apiKey;

@@ -595,15 +595,13 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
             mSession.disconnect();
         } else if (action.equals("publish")) {
             if (sessionConnected) {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    cordova.requestPermissions(this, 0, perms);
-                    permissionsCallback = callbackContext;
-                } else {
+                Log.i(TAG, "publisher is before");
+                
                     if(myPublisher != null){
                     myPublisher.startPublishing();
                     Log.i(TAG, "publisher is publishing");
                     }
-                }
+                
             }
         } else if (action.equals("signal")) {
             Connection c = connectionCollection.get(args.getString(2));
@@ -619,6 +617,22 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
                 callbackContext.success();
                 return true;
             }
+        
+        } else if (action.equals("unpublishOnly")) {
+            Log.i( TAG, "unpublishOnly command called");
+            if (myPublisher != null) {
+             if(myPublisher.mPublisher != null){
+                    try {
+                        mSession.unpublish(myPublisher.mPublisher);
+                    } catch(Exception e) {
+                        Log.i(TAG, "Could not unpublishOnly Publisher");
+                    }
+                
+                    callbackContext.success();
+                    return true;
+                }
+            }
+            
         } else if (action.equals("unsubscribe")) {
             Log.i( TAG, "unsubscribe command called");
             Log.i( TAG, "unsubscribe data: " + args.toString() );
@@ -675,6 +689,7 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
     }
 
     public void onRequestPermissionResult(int requestCode, String[] permissions, int[] results) throws JSONException {
+        Log.i(TAG, "publisher is after");
         Boolean permissionError = false;
         for (int permissionResult : results) {
             if (permissionResult == PackageManager.PERMISSION_DENIED) {
